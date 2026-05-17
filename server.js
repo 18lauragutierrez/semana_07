@@ -36,6 +36,10 @@ db.sequelize.sync({ alter: true }).then(() => {
   console.error('Error al sincronizar la base de datos:', error);
 });
 
+// Registrar las rutas
+authRoutes(app);
+userRoutes(app);
+
 // Servir archivos estáticos del cliente cuando esté en producción
 if (process.env.NODE_ENV === 'production') {
   const clientDist = path.join(__dirname, 'client', 'dist');
@@ -51,10 +55,6 @@ if (process.env.NODE_ENV === 'production') {
     res.json({ message: 'Bienvenido a la aplicación JWT de Grace.' });
   });
 }
-
-// Registrar las rutas
-authRoutes(app);
-userRoutes(app);
 
 // Configuración del puerto y puesta en marcha del servidor
 const PORT = process.env.PORT || 8080;
