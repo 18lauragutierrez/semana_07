@@ -1,15 +1,29 @@
 // app/config/db.config.js
 export default {
-  HOST: "localhost",
-  USER: "root",      // Tu usuario de MySQL (normalmente root)
-  PASSWORD: "",      // Tu contraseña de MySQL (déjalo vacío "" si no tienes)
-  DB: "lab07",       // El nombre de la base de datos que crearemos en MySQL
-  PORT: 3306,        // Puerto por defecto de MySQL
-  dialect: "mysql",
+  // Render le pasará la URL completa aquí en internet
+  URL: process.env.DATABASE_URL || null,
+
+  // Datos locales por si en tu PC sigues usando MySQL o Postgres local
+  HOST: process.env.DB_HOST || "localhost",
+  USER: process.env.DB_USER || "root",
+  PASSWORD: process.env.DB_PASSWORD || "",
+  DB: process.env.DB_NAME || "lab07",
+  PORT: process.env.DB_PORT || 3306,
+  
+  // CAMBIAMOS ESTO A POSTGRES
+  dialect: "postgres", 
+  
   pool: {
     max: 5,
     min: 0,
     acquire: 30000,
     idle: 10000
-  }
+  },
+  // Render exige conexión segura SSL para PostgreSQL
+  dialectOptions: process.env.DATABASE_URL ? {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false
+    }
+  } : {}
 };
