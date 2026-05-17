@@ -1,6 +1,8 @@
 // server.js (Raíz del proyecto)
 import express from "express";
 import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
 import db from "./app/models/index.js";
 import authRoutes from "./app/routes/auth.routes.js";
 import userRoutes from "./app/routes/user.routes.js";
@@ -19,6 +21,10 @@ app.use(express.json());
 // Parsear solicitudes de tipo application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
+// Obtener __dirname en ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const Role = db.role;
 
 // Sincronización de la base de datos
@@ -30,10 +36,21 @@ db.sequelize.sync({ alter: true }).then(() => {
   console.error('Error al sincronizar la base de datos:', error);
 });
 
-// Ruta simple de bienvenida
-app.get("/", (req, res) => {
-  res.json({ message: "Bienvenido a la aplicación JWT de Grace." });
-});
+// Servir archivos estáticos del cliente cuando esté en producción
+if (process.env.NODE_ENV === 'production') {
+  const clientDist = path.join(__dirname, 'client', 'dist');
+  app.use(express.static(clientDist));
+
+  // Enviar index.html para cualquier ruta no manejada por la API
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(clientDist, 'index.html'));
+  });
+} else {
+  // Ruta simple de bienvenida en desarrollo
+  app.get('/', (req, res) => {
+    res.json({ message: 'Bienvenido a la aplicación JWT de Grace.' });
+  });
+}
 
 // Registrar las rutas
 authRoutes(app);

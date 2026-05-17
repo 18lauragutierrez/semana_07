@@ -8,10 +8,10 @@ export default {
   USER: process.env.DB_USER || "root",
   PASSWORD: process.env.DB_PASSWORD || "",
   DB: process.env.DB_NAME || "lab07",
-  PORT: process.env.DB_PORT || 3306,
+  PORT: process.env.DB_PORT || 5432,
   
-  // CAMBIAMOS ESTO A POSTGRES
-  dialect: "postgres", 
+  // PostgreSQL en Render y en local
+  dialect: "postgres",
   
   pool: {
     max: 5,
